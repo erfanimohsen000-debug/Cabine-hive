@@ -14,10 +14,10 @@ PITCH = 35              # self-spacing frame pitch (Hoffman end bars)
 FRAME_PLAY = 23         # free play across the frames, as in a 10-frame box (373 - 10*35)
 
 CASSETTE_END = 20       # A-01 cassette end bars carrying the lugs (each end)
-CASSETTE_SIDE = 25      # A-02 cassette side member + telescopic slide (each side)
+CASSETTE_SIDE = 20      # A-02 cassette side member + slide, also covers the bee space (each side)
 CASSETTE_BAR = 20       # A-03 vertical add per floor for cassette structure
-BEE_SPACE = 8           # A-04 clearance around cassette
-DIVIDER = 20            # A-05 follower/division board for winter reduction
+# A-04 bee space to the compartment walls is covered by the cassette members (A-01, A-02)
+DIVIDER = 0             # A-05 no winter division board
 BOTTOM = 60             # A-06 screened bottom + debris tray
 TOP = 40                # A-07 top space / inner cover / feeder
 PARTITION = 25          # A-08 wall between neighbouring compartments
@@ -47,8 +47,8 @@ ROWS_PER_SIDE, COLS = 3, 5
 def option(name, floors, wheels_beside=False, ground=GROUND):
     """floors: list of (frame type, frames per floor)."""
     n = max(c for _, c in floors)
-    depth = TOP_BAR + 2 * CASSETTE_END + 2 * BEE_SPACE          # perpendicular to aisle
-    width = n * PITCH + FRAME_PLAY + DIVIDER + 2 * CASSETTE_SIDE + 2 * BEE_SPACE  # along trailer
+    depth = TOP_BAR + 2 * CASSETTE_END                           # perpendicular to aisle
+    width = n * PITCH + FRAME_PLAY + DIVIDER + 2 * CASSETTE_SIDE  # along trailer
     height = BOTTOM + TOP + sum(FRAMES[t][1] + CASSETTE_BAR for t, _ in floors)
     tier = height + TIER_FLOOR
 
