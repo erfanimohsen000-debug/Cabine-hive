@@ -23,12 +23,14 @@ TOP = 40                # A-07 top space / inner cover / feeder
 PARTITION = 25          # A-08 wall between neighbouring compartments
 TIER_FLOOR = 100        # A-09 floor between rows; Q-09: min. 100 mm
 FIRST_ROW = 200         # Q-29: first row min. 200 mm above the cabin floor
-OUTER_WALL = 100        # A-10 multilayer insulated outer wall
+OUTER_WALL = 50         # A-10 multilayer insulated outer wall (user: ~50 mm)
 AISLE_WALL = 40         # A-11 aisle-side door/wall of each compartment
 ROOF = FLOOR = 150      # A-12 insulated roof / floor
 GROUND = 300            # A-13 body underside to ground (axles at the ends, see study-02)
 GROUND_OVER_WHEELS = 1000  # A-17 underside when the body sits over the wheels (~800 tyre + travel)
 GROUND_WHEELS_BESIDE = 450  # A-18 underside when the axle passes under a narrowed body
+AISLE_MARGIN = 30       # A-19 aisle = compartment depth + margin, so a pulled-out
+                        #      cassette bridges the aisle onto the opposite side
 ROOF_LUGS = 120         # A-15 crane lifting lugs above the roof (R-01)
 TYRE_SIDE = 250         # Q-30: tyre width + clearance to the body, each side
 
@@ -54,8 +56,9 @@ def option(name, floors, wheels_beside=False, ground=GROUND):
 
     length = COLS * width + (COLS - 1) * PARTITION + 2 * OUTER_WALL
     side = depth + OUTER_WALL + AISLE_WALL
-    body_w = WIDTH_LIMIT - (2 * TYRE_SIDE if wheels_beside else 0)
-    aisle = body_w - 2 * side
+    aisle = depth + AISLE_MARGIN
+    body_w = 2 * side + aisle
+    total_w = body_w + (2 * TYRE_SIDE if wheels_beside else 0)
     body_h = FIRST_ROW + ROWS_PER_SIDE * tier - TIER_FLOOR + ROOF + FLOOR
     cassette_kg = max(FRAMES[t][2] * c for t, c in floors)
     colony_kg = sum(FRAMES[t][2] * c for t, c in floors)
@@ -67,6 +70,8 @@ def option(name, floors, wheels_beside=False, ground=GROUND):
         "body L": length,
         "body W": body_w,
         "aisle": aisle,
+        "total W": total_w,
+        "W margin": WIDTH_LIMIT - total_w,
         "body H": body_h,
         "total H": body_h + ground + ROOF_LUGS,
         "H margin": HEIGHT_LIMIT - (body_h + ground + ROOF_LUGS),
